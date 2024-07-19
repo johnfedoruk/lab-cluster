@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# Function to handle build
+build() {
+  echo "Building the cluster"
+  # list_kube_dir | xargs -0 -n 1  echo
+  list_kube_dir | xargs -I {}  kubectl apply -f {}
+  if [ $? -ne 0 ]; then
+    echo "Building failed"
+    exit 1
+  fi
+}
+
+# Function to handle destroy
+destroy() {
+  echo "Destroying the cluster"
+  # list_kube_dir | revl | xargs -0 -n 1  echo
+  list_kube_dir | revl | xargs -I {}  kubectl delete -f {}
+  if [ $? -ne 0 ]; then
+    echo "Destroying failed"
+    exit 2
+  fi
+}
+
+# Function to handle rebuild
+rebuild() {
+  echo "Rebuilding the cluster"
+  echo "..."
+  destroy
+  if [ $? -ne 0 ]; then
+    echo "Rebuild failed"
+    exit 3
+  fi
+  echo "..."
+  build
+  if [ $? -ne 0 ]; then
+    echo "Rebuild failed"
+    exit 3
+  fi
+}
+
+# Function to handle no flags
+no_flags() {
+  echo "No flags"
+  echo
+  help
+  exit 5
+}
+
+# Function to handle incorrect flag
+incorrect_flag() {
+  echo "Inforrect flags"
+  echo
+  help
+  exit 5
+}
+
+# Function to display help message
+help() {
+  echo "Usage: $0 [OPTION]"
+  echo
+  echo "Options:"
+  echo "  --build, -b      Build the cluster"
+  echo "  --destroy, -d    Destroy the cluster"
+  echo "  --rebuild, -r    Rebuild the cluster"
+  echo "  --help, -h       Display this help message"
+  exit 0
+}
+
+revl() {
+  sed '1!G;h;$!d'
+}
+
+list_kube_dir() {
+  local targets=(
+    "infrastructure" \
+    "apps/devl" \
+    "apps/test" \
+    "apps/prod"
+  )
+  for target in "${targets[@]}"; do
+    find "$target" -type d -print0 | while IFS= read -r -d '' dir; do
+      if ls "$dir"/*.yaml >/dev/null 2>&1; then
+        echo "$dir"
+      fi
+    done
+  done
+}
+
+
+# Check if any flag is provided
+if [ $# -eq 0 ]; then
+  echo "no flags"
+  exit 4
+fi
+
+# Parse the flags
+case "$1" in
+  --build|-b)
+    build
+    echo "Done"
+    ;;
+  --destroy|-d)
+    destroy
+    echo "Done"
+    ;;
+  --rebuild|-r)
+    rebuild
+    echo "Done"
+    ;;
+  --help|-h)
+    help
+    ;;
+  *)
+    incorrect_flag
+    ;;
+esac
