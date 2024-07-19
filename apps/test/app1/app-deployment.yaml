@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app1
+  name: app1
+  namespace: test
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: app1
+  template:
+    metadata:
+      labels:
+        app: app1
+        version: v1
+    spec:
+      containers:
+      - name: app1
+        image: httpd:2.4
+        ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        volumeMounts:
+        - name: app1-website
+          mountPath: /usr/local/apache2/htdocs/index.html
+          subPath: index.html
+      volumes:
+      - name: app1-website
+        configMap:
+          name: app1-website
