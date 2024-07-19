@@ -93,4 +93,23 @@ View the pods across all namespaces.
 kubectl get pods --all-namespaces
 ```
 
-Some pods in the **test** namespace will be rebuilt to make room for the **prod** pods, while pods in the **test** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints. All pods in the **devl** namespace should now be pending, given their lowest priority and the resource constraints on **test** pods.
+Some pods in the **test** namespace will be rebuilt to make room for the **prod** pods, while pods in the **test** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints. Some pods in the **devl** namespace should now be pending, but some of these pods will still be running given their smaller resource constraints, taking up remaining space across the nodes.
+
+### Test 4
+
+Increasing resources for **devl** pods.
+
+Checkout branch [test/priority-4](https://github.com/wearewiser/lab-cluster/tree/test/priority-4) and simply build cluster to apply changes to resource requests.
+
+```
+git checkout test/priority-4
+./clustercmd --build
+```
+
+View the pods across all namespaces.
+
+```
+kubectl get pods --all-namespaces
+```
+
+Some pods in the **test** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints, and all pods in the **devl** namespace should now be pending given there is not enough resources for them to be running on the clsuter.
