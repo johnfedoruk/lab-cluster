@@ -81,7 +81,7 @@ Some pods in the **devl** namespace will be rebuilt to make room for the **test*
 > If you notice that some of the **test** pods are pending, then that indicates that distribution of the **prod** pods are preventing the **test** pods from being scheduled across the clusters. To address this, build the cluster so that the **test** pods are built before the higher priority **prod** pods.
 >
 > ```
-> ./clustercmd --build
+> ./clustercmd --rebuild
 > ```
 
 ### Test 3
