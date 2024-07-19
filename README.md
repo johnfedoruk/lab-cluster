@@ -76,6 +76,14 @@ kubectl get pods --all-namespaces
 
 Some pods in the **devl** namespace will be rebuilt to make room for the **test** pods, and some pods in the **devl** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints.
 
+> **Note**
+>
+> If you notice that some of the **test** pods are pending, then that indicates that distribution of the **prod** pods are preventing the **test** pods from being scheduled across the clusters. To address this, build the cluster so that the **test** pods are built before the higher priority **prod** pods.
+>
+> ```
+> ./clustercmd --build
+> ```
+
 ### Test 3
 
 Increasing resources for **prod** pods.
@@ -99,11 +107,11 @@ Some pods in the **test** namespace will be rebuilt to make room for the **prod*
 
 Increasing resources for **devl** pods.
 
-Checkout branch [test/priority-4](https://github.com/wearewiser/lab-cluster/tree/test/priority-4) and simply build cluster to apply changes to resource requests.
+Checkout branch [test/priority-4](https://github.com/wearewiser/lab-cluster/tree/test/priority-4) and rebuild cluster to apply changes to resource requests. A rebuild is necessary because the applied changes to resources will not evict the running pods as they will be all unschedulable.
 
 ```
 git checkout test/priority-4
-./clustercmd --build
+./clustercmd --rebuild
 ```
 
 View the pods across all namespaces.
