@@ -1,0 +1,34 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: global
+value: 1000000
+globalDefault: true
+description: "Priority class for unspecified pods, globally."
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: prod
+value: 800000
+globalDefault: false
+description: "Priority class for production pods."
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: test
+value: 500000
+globalDefault: false
+description: "Priority class for test pods."
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: devl
+value: 200000
+globalDefault: false
+description: "Priority class for development pods."
