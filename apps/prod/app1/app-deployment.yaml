@@ -16,6 +16,7 @@ spec:
         app: app1
         version: v1
     spec:
+      priorityClassName: prod
       containers:
       - name: app1
         image: httpd:2.4
