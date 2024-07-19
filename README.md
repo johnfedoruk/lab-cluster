@@ -19,3 +19,78 @@ Options:
   --rebuild, -r    Rebuild the cluster
   --help, -h       Display this help message
 ```
+
+## Experiments
+
+### Priority Experiment
+
+This experiment is meant to test the ability of a priority class to wipe out lower rank priority classes.
+
+#### Experiment Setup
+
+Create a cluster with the following specs:
+
+- Location type: Regional
+- Zone: europe-west1
+- Nodes: 3 (1 per zone)
+- Machine type: e2-standard-2
+- Image type: Container-Optimized OS with containerd
+- Version: 1.29.6-gke.1038001
+- Node auto-provisioning: Disabled
+
+### Test 1
+
+Control test. There are enough resources for all pods to be scheduled.
+
+Checkout branch [test/priority-1](https://github.com/wearewiser/lab-cluster/tree/test/priority-1) and rebuild the cluster.
+
+```
+git checkout test/priority-1
+./clustercmd --rebuild
+```
+
+View the pods across all namespaces.
+
+```
+kubectl get pods --all-namespaces
+```
+
+All pods should be running. Sufficient resources are available for them.
+
+### Test 2
+
+Increasing resources for **test** pods.
+
+Checkout branch [test/priority-2](https://github.com/wearewiser/lab-cluster/tree/test/priority-2) and simply build cluster to apply changes to resource requests.
+
+```
+git checkout test/priority-2
+./clustercmd --build
+```
+
+View the pods across all namespaces.
+
+```
+kubectl get pods --all-namespaces
+```
+
+Some pods in the **devl** namespace will be rebuilt to make room for the **test** pods, and some pods in the **devl** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints.
+
+### Test 3
+
+Increasing resources for **prod** pods.
+
+Checkout branch [test/priority-3](https://github.com/wearewiser/lab-cluster/tree/test/priority-3) and simply build cluster to apply changes to resource requests.
+
+```
+git checkout test/priority-3
+./clustercmd --build
+```
+
+View the pods across all namespaces.
+
+```
+kubectl get pods --all-namespaces
+```
+
+Some pods in the **test** namespace will be rebuilt to make room for the **prod** pods, while pods in the **test** namespace will be stuck in *pending* as there are insufficient resources for all pods to be running with the given constraints. All pods in the **devl** namespace should now be pending, given their lowest priority and the resource constraints on **test** pods.
