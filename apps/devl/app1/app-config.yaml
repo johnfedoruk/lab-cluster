@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  index.html: |
+    <html>
+      <head>
+        <title>Wiser Labs - Development Environment</title>
+      </head>
+      <body>
+        <h1>This is just a laboratory environment</h1>
+        <p>There is nothing happening here. Now go away!</p>
+        <p><small>DEVL environment</small></p>
+      </body>
+    </html>
+kind: ConfigMap
+metadata:
+  name: app1-website
+  namespace: devl
